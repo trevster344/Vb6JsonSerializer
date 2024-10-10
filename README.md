@@ -53,6 +53,6 @@ b(2).nested = c
 a.nested = b
 
 jsonStr = helper.ConvertToJson(a)
-
-{"name": "Test","test Spaced Name": "","nested": [{"name": "Test","test Spaced Name": "","nested": null},{"name": "Test","test Spaced Name": "","nested": {"name": "Test","test Spaced Name": "","nested": {"name": "Test","test Spaced Name": "","nested": null}}}]}
 ```
+
+`{"name": "Test","test Spaced Name": "","nested": [{"name": "Test","test Spaced Name": "","nested": null},{"name": "Test","test Spaced Name": "","nested": {"name": "Test","test Spaced Name": "","nested": {"name": "Test","test Spaced Name": "","nested": null}}}]}`
