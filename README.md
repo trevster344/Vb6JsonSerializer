@@ -5,6 +5,7 @@ Easily serialize json using the TypeLib Information com library from Microsoft.
 Copy the `JsonSerializer` class module into your project.
 
 Add a project reference to `TypeLib Information` from tlbinf32.dll.
+Add a project reference to `Microsoft Scripting Runtime`
 
 # Install Missing DLL
 Download the tlbinf32.dll
