@@ -32,7 +32,7 @@ Result:
 
 You can optionally enable(default) or disable null values from being in the json via the IgnoreNulls property
 
-`helper.IgnoreNulls = false`
+`helper.IgnoreNulls = true`
 
 `{ "name": "Test" }`
 
