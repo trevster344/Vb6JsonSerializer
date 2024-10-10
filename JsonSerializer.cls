@@ -16,7 +16,7 @@ Option Explicit
 Public IgnoreNulls As Boolean
 
 Private Sub Class_Initialize()
-    IgnoreNulls = False
+    IgnoreNulls = True
 End Sub
 
 Public Function EscapeString(ByVal str As String) As String
@@ -65,7 +65,7 @@ Private Function ClassToDictionary(ByVal obj As Object) As Object
         'Set kind = propInfo.InvokeKind
         
         On Error GoTo dictLet
-        propValue = CallByName(obj, propName, VbGet)
+        Call SafeGetValue(propValue, CallByName(obj, propName, VbGet))
         GoTo dictNow
 dictLet:
         Set propValue = CallByName(obj, propName, VbGet)
@@ -74,16 +74,18 @@ dictLet:
         
 dictNow:
         If Not dict.Exists(propName) Then
-        ' Check if property is another class (nested class)
-        If isObject(propValue) Then
-            Set classObject = propValue
-            Dim childDict As Object
-            'Set childDict = CreateObject("Scripting.Dictionary")
-            Set childDict = ClassToDictionary(classObject)
-            dict.Add propName, childDict
-        Else
-            dict.Add propName, propValue
-        End If
+            ' Check if property is another class (nested class)
+            If isObject(propValue) Then
+                Dim childDict As Object
+                If Not propValue Is Nothing Then
+                    Set classObject = propValue
+                    Set childDict = ClassToDictionary(classObject)
+                End If
+                
+                dict.Add propName, childDict
+            Else
+                dict.Add propName, propValue
+            End If
         End If
 nextProp:
     Next propInfo
@@ -106,7 +108,11 @@ Private Function ToJson(ByVal obj As Variant) As String
         Case vbArray
             ToJson = ArrayToJson(obj)
         Case vbObject
-            ToJson = DictionaryToJson(ClassToDictionary(obj))
+            If Not obj Is Nothing Then
+                ToJson = DictionaryToJson(ClassToDictionary(obj))
+            Else
+                ToJson = "null"
+            End If
         Case Else
             Dim ub As Integer
             ub = UBound(obj)
@@ -199,9 +205,11 @@ Private Function DictionaryToJson(ByVal dict As Object) As String
         Dim json As String
         json = ToJson(dict(key))
         
-        If IgnoreNulls And json <> "null" Then
-            result = result & """" & EncodeKey(key) & """: " & json & ","
-            Else
+        If IgnoreNulls Then
+            If json <> "null" Then
+                result = result & """" & EncodeKey(key) & """: " & json & ","
+            End If
+        Else
             result = result & """" & EncodeKey(key) & """: " & json & ","
         End If
         
